@@ -1,0 +1,13 @@
+---
+title: TV's Golden Age
+jupyter: python3
+---
+
+
+```{python}
+import polars as pl
+
+url = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-01-08/IMDb_Economist_tv_ratings.csv"
+
+pl.read_csv(url)
+```
