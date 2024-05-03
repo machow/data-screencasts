@@ -1,0 +1,8 @@
+siuba
+plotnine
+seaborn
+polars
+great-tables
+statsmodels
+pandas
+scikit-learn
