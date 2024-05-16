@@ -1,1 +1,4 @@
-
+pandas
+plotnine
+polars
+great_tables
