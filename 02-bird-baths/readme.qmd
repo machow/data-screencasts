@@ -1,0 +1,80 @@
+---
+title: "Bird baths: logistic regression"
+---
+
+This notebook is heavily inspired by Julia Silge's [Bird Bath's](https://juliasilge.com/blog/bird-baths/) data analysis in R.
+
+See these useful links:
+
+* The [source dataset on TidyTuesday](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021/2021-08-31)
+
+## Preparing data
+
+```{python}
+import pandas as pd
+
+bird_baths_raw = pd.read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-08-31/bird_baths.csv")
+
+bird_baths = bird_baths_raw[bird_baths_raw["urban_rural"].notna()]
+
+bird_baths
+```
+
+## What is a row (observation)?
+
+It looks like what happened is:
+
+* people spent sessions observing birds
+* they recorded what birds they saw
+* for every bird, this was turned into a 1 if they saw the bird, and a 0 if not.
+
+This means that every session resulted in 169 rows, one for each bird.
+Sessions could occur in different bioregions (like Brigalow Belt South), which were coded as Urban or Rural. The `survey_year` was recorded for each session. Multiple sessions could happen at the same bioregions (presumably at different times).
+
+```{python}
+# peek at bird_count variable, which seem to be 0 or 1
+bird_baths.sort_values("bird_count", ascending=False)
+```
+
+```{python}
+# count bird types, which seem to add to 952
+# this is a good sign that every bird was given a bird_count per session.
+bird_baths.value_counts(["bird_type"])
+```
+
+
+```{python}
+# count by 3 things, which seem to identify a session.
+(
+    bird_baths
+    .groupby(["urban_rural", "bioregions", "survey_year"])["bird_type"]
+    .nunique()
+    .reset_index()
+)
+```
+
+## Grabbing a subset of birds for modelling
+
+For this analysis we'll use the most frequently seen birds.
+
+```{python}
+birds_proportion = (
+    bird_baths
+    .groupby(["bird_type"])
+    ["bird_count"]
+    .mean()
+    .reset_index()
+    .sort_values("bird_count", ascending=False)
+    .head(15)
+
+)
+
+top_birds = bird_baths[
+    bird_baths["bird_type"].isin(birds_proportion["bird_type"])
+]
+```
+
+## Visualizing birds seen in urban vs rural settings
+
+## Modeling probability off seeing a bird in Urban vs Rural settings
+
